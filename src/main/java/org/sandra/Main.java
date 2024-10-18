@@ -165,13 +165,18 @@ public class Main {
                     break;
 
                 case 6:
-                    // Ta bort en film (DELETE)
+                    // DELETE: Ta bort en film
                     System.out.println("Ange ID på filmen som ska tas bort: ");
                     long deleteId = scanner.nextLong();
                     scanner.nextLine();
 
-                    movieService.sendDeleteRequest( "http://enskilduppgift3-env.eba-dep3smvq.eu-north-1.elasticbeanstalk.com/movies/" + deleteId);
-                    System.out.println("Filmen med ID " + deleteId + " har raderats.");
+                    try {
+                        // Försök att radera filmen direkt utan att först hämta den
+                        movieService.sendDeleteRequest("http://enskilduppgift3-env.eba-dep3smvq.eu-north-1.elasticbeanstalk.com/movies/" + deleteId);
+                    } catch (Exception e) {
+                        System.out.println("Ett fel inträffade: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                     break;
 
                 case 7:
@@ -186,3 +191,4 @@ public class Main {
         }
     }
 }
+
