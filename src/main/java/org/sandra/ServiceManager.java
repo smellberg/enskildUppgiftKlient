@@ -34,7 +34,7 @@ public class ServiceManager <T> {
 
         if (response.getCode() != 200) {
             if (response.getCode() == 404) {
-                System.out.println("Filmen finns inte.");
+                System.out.println("Filmen finns inte, återgår till menyn.");
             } else {
                 System.out.println(String.format("Något har gått fel! Statuskod: %d", response.getCode()));
             }
@@ -73,7 +73,7 @@ public class ServiceManager <T> {
         int statusCode = response.getCode();
         if (statusCode != 200) {
             if (statusCode == 404) {
-                System.out.println("Författaren finns inte.");
+                System.out.println("Författaren finns inte, åtegår till menyn.");
             } else if (statusCode == 500) {
                 System.out.println("Ett fel har inträffat på servern. Försök igen senare.");
             } else {
@@ -106,12 +106,25 @@ public class ServiceManager <T> {
         return mapper.readValue(jsonResp, responseType);
     }
     //För DELETE-request
-    public void sendDeleteRequest(String uri) throws IOException, ParseException{
-        HttpDelete request = new HttpDelete(uri);
-        CloseableHttpResponse response = httpClient.execute(request);
+    public void sendDeleteRequest(String url) throws IOException, ParseException {
+        HttpDelete request = new HttpDelete(url);
+        CloseableHttpResponse response = null;
 
-        if (response.getCode() !=200){
-            System.out.println(String.format("Något gick fel, statuskod: %d", response.getCode()));
+        try{
+            response = httpClient.execute(request);
+            int statusCode = response.getCode();
+
+
+            if (statusCode == 404) {
+                System.out.println("Ingen film med det angivna ID:t kunde hittas.");
+            }
+
+            System.out.println("Filmen har raderats.");
+
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
     }
 }
